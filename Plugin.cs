@@ -10,46 +10,39 @@ using VersionChecker;
 
 namespace DoorBreach
 {
-    [BepInPlugin("com.dvize.BackdoorBandit", "dvize.BackdoorBandit", "1.6.0")]
+    [BepInPlugin("com.nektoNick.BackdoorBandit", "nektoNick.BackdoorBandit", DoorBreachPlugin.PluginVarsion)]
     [BepInDependency("com.spt-aki.core", "3.6.1")]
     public class DoorBreachPlugin : BaseUnityPlugin
     {
-        public static ConfigEntry<bool> PlebMode;
-        public static ConfigEntry<bool> OpenLootableContainers;
-        public static ConfigEntry<bool> OpenCarDoors;
+        public const String PluginVarsion = "1.0.1";
+
+        public static ConfigEntry<float> ObjectHP;
+        public static ConfigEntry<float> NonLockHitDmgMult;
+        public static ConfigEntry<float> LockHitDmgMult;
+        public static ConfigEntry<float> ThinWoodProtectionMult;
+        public static ConfigEntry<float> PlasticProtectionMult;
+        public static ConfigEntry<float> ThickWoodProtectionMult;
+        public static ConfigEntry<float> ThinMetalProtectionMult;
+        public static ConfigEntry<float> ThickMetalProtectionMult;
+        public static ConfigEntry<float> MeeleWeaponDamageMult;
 
         public static int interactiveLayer;
         private void Awake()
         {
             CheckEftVersion();
 
-            PlebMode = Config.Bind(
-                "1. Main Settings",
-                "Plebmode",
-                false,
-                new ConfigDescription("Enabled Means No Requirements To Breach Any Door/LootContainer",
-                null,
-                new ConfigurationManagerAttributes { IsAdvanced = false, Order = 3}));
-
-            OpenLootableContainers = Config.Bind(
-                "1. Main Settings",
-                "Breach Lootable Containers",
-                false,
-                new ConfigDescription("If enabled, can use shotgun breach rounds on safes",
-                null,
-                new ConfigurationManagerAttributes { IsAdvanced = false, Order = 2 }));
-
-            OpenCarDoors = Config.Bind(
-                "1. Main Settings",
-                "Breach Car Doors",
-                false,
-                new ConfigDescription("If Enabled, can use shotgun breach rounds on car doors",
-                null,
-                new ConfigurationManagerAttributes { IsAdvanced = false, Order = 1 }));
+            ObjectHP = Config.Bind("1. HP", "ObjectHP", 200F);
+            NonLockHitDmgMult = Config.Bind("2. Lock Hits", "NonLockHitDmgMult", 0.5F);
+            LockHitDmgMult = Config.Bind("2. Lock Hits", "LockHitDmgMult", 2F);
+            ThinWoodProtectionMult = Config.Bind("3. Material Protection", "ThinWoodProtectionMult", 3F);
+            PlasticProtectionMult = Config.Bind("3. Material Protection", "PlasticProtectionMult", 3F);
+            ThickWoodProtectionMult = Config.Bind("3. Material Protection", "ThickWoodProtectionMult", 5F);
+            ThinMetalProtectionMult = Config.Bind("3. Material Protection", "ThinMetalProtectionMult", 10F);
+            ThickMetalProtectionMult = Config.Bind("3. Material Protection", "ThickMetalProtectionMult", 15F);
+            MeeleWeaponDamageMult = Config.Bind("4. Specific Weapon", "MeeleWeaponDamageMult", 5F);
 
             new NewGamePatch().Enable();
             new BackdoorBandit.ApplyHit().Enable();
-
         }
 
         private void CheckEftVersion()
