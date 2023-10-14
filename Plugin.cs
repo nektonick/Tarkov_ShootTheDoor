@@ -10,7 +10,7 @@ using VersionChecker;
 
 namespace DoorBreach
 {
-    [BepInPlugin("com.nektoNick.BackdoorBandit", "nektoNick.BackdoorBandit", DoorBreachPlugin.PluginVarsion)]
+    [BepInPlugin("com.nektonick.BackdoorBandit", "nektonick.BackdoorBandit", DoorBreachPlugin.PluginVarsion)]
     [BepInDependency("com.spt-aki.core", "3.6.1")]
     public class DoorBreachPlugin : BaseUnityPlugin
     {
