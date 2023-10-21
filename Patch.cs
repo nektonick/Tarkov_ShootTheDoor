@@ -100,7 +100,7 @@ namespace BackdoorBandit
 
 
         [PatchPostfix]
-        public static void PatchPostFix(DamageInfo damageInfo, GStruct353 shotID)
+        public static void PatchPostFix(DamageInfo damageInfo, GStruct357 shotID)
         {
             try
             {
@@ -156,7 +156,7 @@ namespace BackdoorBandit
                     EInteractionType interraction = (interactableObj as Door != null) ? EInteractionType.Breach : EInteractionType.Open;
 
                     var player = damageInfo.Player.AIData.Player;
-                    player.CurrentManagedState.ExecuteDoorInteraction(interactableObj, new GClass2846(interraction), null, player);
+                    player.CurrentManagedState.ExecuteDoorInteraction(interactableObj, new InteractionResult(interraction), null, player);
                 }
 
                 DoorBreachComponent.Logger.LogDebug("End processing correct shoot\n");

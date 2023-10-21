@@ -21,4 +21,4 @@ using VersionChecker;
 
 [assembly: AssemblyVersion(DoorBreachPlugin.PluginVarsion)]
 [assembly: AssemblyFileVersion(DoorBreachPlugin.PluginVarsion)]
-[assembly: TarkovVersion(25206)]
+[assembly: TarkovVersion(26535)]
