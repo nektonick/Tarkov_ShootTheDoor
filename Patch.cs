@@ -13,15 +13,15 @@ using EFT.InventoryLogic;
 using HarmonyLib;
 using UnityEngine;
 
-namespace BackdoorBandit
+namespace ShootTheDoor
 {
     internal class DoorBreachComponent : MonoBehaviour
     { //also all stolen from drakiaxyz
-        public static ManualLogSource Logger {get; private set;} = BepInEx.Logging.Logger.CreateLogSource("BackdoorBandit");
+        public static ManualLogSource Logger {get; private set;} = BepInEx.Logging.Logger.CreateLogSource("ShootTheDoor");
 
         private DoorBreachComponent()
         {
-            Logger.LogInfo($"This is BackdoorBandit {DoorBreachPlugin.PluginVarsion}");
+            Logger.LogInfo($"This is ShootTheDoor {DoorBreachPlugin.PluginVarsion}");
         }
 
         public void Awake()

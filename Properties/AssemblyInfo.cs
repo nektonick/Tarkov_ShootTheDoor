@@ -3,11 +3,11 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using VersionChecker;
 
-[assembly: AssemblyTitle("nektonick.BackdoorBandit")]
+[assembly: AssemblyTitle("nektonick.ShootTheDoor")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("nektonick.BackdoorBandit")]
+[assembly: AssemblyProduct("nektonick.ShootTheDoor")]
 [assembly: AssemblyCopyright("Copyright 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

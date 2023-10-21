@@ -7,8 +7,8 @@
     <ProjectGuid>{30D38A81-B688-474D-A40A-47BFC63BFE69}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BackdoorBandit</RootNamespace>
-    <AssemblyName>nektonick.BackdoorBandit</AssemblyName>
+    <RootNamespace>ShootTheDoor</RootNamespace>
+    <AssemblyName>nektonick.ShootTheDoor</AssemblyName>
     <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

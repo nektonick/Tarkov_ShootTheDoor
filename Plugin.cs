@@ -10,7 +10,7 @@ using VersionChecker;
 
 namespace DoorBreach
 {
-    [BepInPlugin("com.nektonick.BackdoorBandit", "nektonick.BackdoorBandit", DoorBreachPlugin.PluginVarsion)]
+    [BepInPlugin("com.nektonick.ShootTheDoor", "nektonick.ShootTheDoor", DoorBreachPlugin.PluginVarsion)]
     [BepInDependency("com.spt-aki.core", "3.7.1")]
     public class DoorBreachPlugin : BaseUnityPlugin
     {
@@ -42,7 +42,7 @@ namespace DoorBreach
             MeeleWeaponDamageMult = Config.Bind("4. Specific Weapon", "MeeleWeaponDamageMult", 5F);
 
             new NewGamePatch().Enable();
-            new BackdoorBandit.ApplyHit().Enable();
+            new ShootTheDoor.ApplyHit().Enable();
         }
 
         private void CheckEftVersion()
@@ -70,7 +70,7 @@ namespace DoorBreach
             //stolen from drakiaxyz - thanks
             DoorBreachPlugin.interactiveLayer = LayerMask.NameToLayer("Interactive");
 
-            BackdoorBandit.DoorBreachComponent.Enable();
+            ShootTheDoor.DoorBreachComponent.Enable();
         }
     }
 }
