@@ -1,13 +1,14 @@
+using DoorBreach;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using VersionChecker;
 
-[assembly: AssemblyTitle("dvize.BackdoorBandit")]
+[assembly: AssemblyTitle("nektonick.BackdoorBandit")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("dvize.BackdoorBandit")]
-[assembly: AssemblyCopyright("Copyright ©  2023")]
+[assembly: AssemblyProduct("nektonick.BackdoorBandit")]
+[assembly: AssemblyCopyright("Copyright 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -18,6 +19,6 @@ using VersionChecker;
 [assembly: Guid("8fdfc616-1704-4056-a87e-2783692cc153")]
 
 
-[assembly: AssemblyVersion("1.6.0.0")]
-[assembly: AssemblyFileVersion("1.6.0.0")]
+[assembly: AssemblyVersion(DoorBreachPlugin.PluginVarsion)]
+[assembly: AssemblyFileVersion(DoorBreachPlugin.PluginVarsion)]
 [assembly: TarkovVersion(25206)]
