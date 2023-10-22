@@ -11,10 +11,10 @@ using VersionChecker;
 namespace DoorBreach
 {
     [BepInPlugin("com.nektonick.ShootTheDoor", "nektonick.ShootTheDoor", DoorBreachPlugin.PluginVarsion)]
-    [BepInDependency("com.spt-aki.core", "3.7.1")]
+    [BepInDependency("com.spt-aki.core", "3.7.0")]
     public class DoorBreachPlugin : BaseUnityPlugin
     {
-        public const String PluginVarsion = "1.2.0";
+        public const String PluginVarsion = "1.1.9";
 
         public static ConfigEntry<float> ObjectHP;
         public static ConfigEntry<float> NonLockHitDmgMult;

@@ -40,7 +40,7 @@
     <OutputPath>bin\x64\Release\</OutputPath>
   </PropertyGroup>
   <PropertyGroup>
-    <SptFolder>C:\Games\SPT_3_7_1</SptFolder>
+    <SptFolder>C:\Games\SPT_3_7_0</SptFolder>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
