@@ -62,11 +62,11 @@ namespace DoorBreach
 
             Tier0LockpickAmmoBaseDamage = Config.Bind("5. Lockpick ammo", "Tier0LockpickAmmoBaseDamage", 100F);
             Tier0LockpickAmmoDamageMult = Config.Bind("5. Lockpick ammo", "Tier0LockpickAmmoDamageMult", 1F);
-            Tier1LockpickAmmoBaseDamage = Config.Bind("5. Lockpick ammo", "Tier1LockpickAmmoBaseDamage", 200F);
+            Tier1LockpickAmmoBaseDamage = Config.Bind("5. Lockpick ammo", "Tier1LockpickAmmoBaseDamage", 500F);
             Tier1LockpickAmmoDamageMult = Config.Bind("5. Lockpick ammo", "Tier1LockpickAmmoDamageMult", 1F);
-            Tier2LockpickAmmoBaseDamage = Config.Bind("5. Lockpick ammo", "Tier2LockpickAmmoBaseDamage", 400F);
+            Tier2LockpickAmmoBaseDamage = Config.Bind("5. Lockpick ammo", "Tier2LockpickAmmoBaseDamage", 2500F);
             Tier2LockpickAmmoDamageMult = Config.Bind("5. Lockpick ammo", "Tier2LockpickAmmoDamageMult", 1F);
-            Tier3LockpickAmmoBaseDamage = Config.Bind("5. Lockpick ammo", "Tier3LockpickAmmoBaseDamage", 800F);
+            Tier3LockpickAmmoBaseDamage = Config.Bind("5. Lockpick ammo", "Tier3LockpickAmmoBaseDamage", 10000F);
             Tier3LockpickAmmoDamageMult = Config.Bind("5. Lockpick ammo", "Tier3LockpickAmmoDamageMult", 1F);
 
             new NewGamePatch().Enable();

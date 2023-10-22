@@ -28,7 +28,7 @@
                     {
                         "//Comment": "Mechanic. See https://hub.sp-tarkov.com/doc/entry/43-traders-currencies-and-handbook-ids/",
                         "trader": "5a7c2eca46aef81a7ca2145d",
-                        "count": 20,
+                        "count": 10,
                         "price": {
                             "value": 25000,
                             "//Comment": "Roubles. See https://db.sp-tarkov.com/search",
