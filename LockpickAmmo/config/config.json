@@ -11,8 +11,10 @@
                 "description": "Ammo with high damage against doors. Almost useless against enemies",
                 "price_in_handbook": 15000,
                 "ammo_options": {
+                    "//Comment": "This is damage against enemies. Damage against objects depends on #TIER tag in id",
                     "damage": 1,
                     "armor_damage": 1,
+                    "//Comment2": "Not used for now. Will affect damage agains objects in future version.",
                     "penetration_power": 10,
                     "penetration_chance": 0.2,
                     "penetration_power_diviation": 1,
@@ -26,9 +28,9 @@
                     {
                         "//Comment": "Mechanic. See https://hub.sp-tarkov.com/doc/entry/43-traders-currencies-and-handbook-ids/",
                         "trader": "5a7c2eca46aef81a7ca2145d",
-                        "count": 5,
+                        "count": 20,
                         "price": {
-                            "value": 15000,
+                            "value": 25000,
                             "//Comment": "Roubles. See https://db.sp-tarkov.com/search",
                             "currencie": "5449016a4bdc2d6f028b456f"
                         },
@@ -45,8 +47,10 @@
                 "description": "Ammo with high damage against doors. Almost useless against enemies",
                 "price_in_handbook": 35000,
                 "ammo_options": {
+                    "//Comment": "This is damage against enemies. Damage against objects depends on #TIER tag in id",
                     "damage": 1,
                     "armor_damage": 1,
+                    "//Comment2": "Not used for now. Will affect damage agains objects in future version.",
                     "penetration_power": 50,
                     "penetration_chance": 0.5,
                     "penetration_power_diviation": 1,
@@ -60,9 +64,9 @@
                     {
                         "//Comment": "Mechanic. See https://hub.sp-tarkov.com/doc/entry/43-traders-currencies-and-handbook-ids/",
                         "trader": "5a7c2eca46aef81a7ca2145d",
-                        "count": 1,
+                        "count": 3,
                         "price": {
-                            "value": 35000,
+                            "value": 50000,
                             "//Comment": "Roubles. See https://db.sp-tarkov.com/search",
                             "currencie": "5449016a4bdc2d6f028b456f"
                         },

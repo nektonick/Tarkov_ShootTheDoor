@@ -21,18 +21,26 @@ namespace DoorBreach
         public const String TIER3_LOCKPICK_TAG = "#TIER3";    
 
         public static ConfigEntry<float> ObjectHP;
+
         public static ConfigEntry<float> NonLockHitDmgMult;
         public static ConfigEntry<float> LockHitDmgMult;
+
         public static ConfigEntry<float> ThinWoodProtectionMult;
         public static ConfigEntry<float> PlasticProtectionMult;
         public static ConfigEntry<float> ThickWoodProtectionMult;
         public static ConfigEntry<float> ThinMetalProtectionMult;
         public static ConfigEntry<float> ThickMetalProtectionMult;
+
         public static ConfigEntry<float> MeeleWeaponDamageMult;
-        public static ConfigEntry<float> AdditionalDamageForTier0LockpickAmmo;
-        public static ConfigEntry<float> AdditionalDamageForTier1LockpickAmmo;
-        public static ConfigEntry<float> AdditionalDamageForTier2LockpickAmmo;
-        public static ConfigEntry<float> AdditionalDamageForTier3LockpickAmmo;
+
+        public static ConfigEntry<float> Tier0LockpickAmmoBaseDamage;
+        public static ConfigEntry<float> Tier0LockpickAmmoDamageMult;
+        public static ConfigEntry<float> Tier1LockpickAmmoBaseDamage;
+        public static ConfigEntry<float> Tier1LockpickAmmoDamageMult;
+        public static ConfigEntry<float> Tier2LockpickAmmoBaseDamage;
+        public static ConfigEntry<float> Tier2LockpickAmmoDamageMult;
+        public static ConfigEntry<float> Tier3LockpickAmmoBaseDamage;
+        public static ConfigEntry<float> Tier3LockpickAmmoDamageMult;
 
         public static int interactiveLayer;
         private void Awake()
@@ -40,18 +48,26 @@ namespace DoorBreach
             CheckEftVersion();
 
             ObjectHP = Config.Bind("1. HP", "ObjectHP", 200F);
+
             NonLockHitDmgMult = Config.Bind("2. Lock Hits", "NonLockHitDmgMult", 0.5F);
             LockHitDmgMult = Config.Bind("2. Lock Hits", "LockHitDmgMult", 2F);
+
             ThinWoodProtectionMult = Config.Bind("3. Material Protection", "ThinWoodProtectionMult", 3F);
             PlasticProtectionMult = Config.Bind("3. Material Protection", "PlasticProtectionMult", 3F);
             ThickWoodProtectionMult = Config.Bind("3. Material Protection", "ThickWoodProtectionMult", 5F);
             ThinMetalProtectionMult = Config.Bind("3. Material Protection", "ThinMetalProtectionMult", 10F);
             ThickMetalProtectionMult = Config.Bind("3. Material Protection", "ThickMetalProtectionMult", 15F);
+
             MeeleWeaponDamageMult = Config.Bind("4. Specific Weapon", "MeeleWeaponDamageMult", 5F);
-            AdditionalDamageForTier0LockpickAmmo = Config.Bind("5. Lockpick ammo", "AdditionalDamageForTier0LockpickAmmo", 50F);
-            AdditionalDamageForTier1LockpickAmmo = Config.Bind("5. Lockpick ammo", "AdditionalDamageForTier1LockpickAmmo", 100F);
-            AdditionalDamageForTier2LockpickAmmo = Config.Bind("5. Lockpick ammo", "AdditionalDamageForTier2LockpickAmmo", 200F);
-            AdditionalDamageForTier3LockpickAmmo = Config.Bind("5. Lockpick ammo", "AdditionalDamageForTier3LockpickAmmo", 400F);
+
+            Tier0LockpickAmmoBaseDamage = Config.Bind("5. Lockpick ammo", "Tier0LockpickAmmoBaseDamage", 100F);
+            Tier0LockpickAmmoDamageMult = Config.Bind("5. Lockpick ammo", "Tier0LockpickAmmoDamageMult", 1F);
+            Tier1LockpickAmmoBaseDamage = Config.Bind("5. Lockpick ammo", "Tier1LockpickAmmoBaseDamage", 200F);
+            Tier1LockpickAmmoDamageMult = Config.Bind("5. Lockpick ammo", "Tier1LockpickAmmoDamageMult", 1F);
+            Tier2LockpickAmmoBaseDamage = Config.Bind("5. Lockpick ammo", "Tier2LockpickAmmoBaseDamage", 400F);
+            Tier2LockpickAmmoDamageMult = Config.Bind("5. Lockpick ammo", "Tier2LockpickAmmoDamageMult", 1F);
+            Tier3LockpickAmmoBaseDamage = Config.Bind("5. Lockpick ammo", "Tier3LockpickAmmoBaseDamage", 800F);
+            Tier3LockpickAmmoDamageMult = Config.Bind("5. Lockpick ammo", "Tier3LockpickAmmoDamageMult", 1F);
 
             new NewGamePatch().Enable();
             new ShootTheDoor.ApplyHit().Enable();
