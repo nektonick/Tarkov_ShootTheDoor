@@ -1,0 +1,7 @@
+{
+    "price": 100000,
+    "trader_loyalty_level": 1,
+    "columns": [
+        {"cellH": 10, "cellV": 10}
+    ]
+}
