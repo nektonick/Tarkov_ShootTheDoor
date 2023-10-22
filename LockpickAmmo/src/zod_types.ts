@@ -124,3 +124,10 @@ export const LockpickAmmoTemplate = z.object({
     traders_options: z.array(TraderOptions).default(Defaults.TRADERS_OPTIONS)
 });
 export type LockpickAmmoTemplate = z.infer<typeof LockpickAmmoTemplate>;
+
+export const LockpickAmmoModConfig = z.object({
+    lockpick_ammo_mod: z.object({
+        lockpick_ammo: z.array(LockpickAmmoTemplate)
+    })
+})
+export type LockpickAmmoModConfig = z.infer<typeof LockpickAmmoModConfig>;

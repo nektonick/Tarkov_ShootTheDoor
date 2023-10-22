@@ -7,8 +7,8 @@ import { JsonUtil } from "@spt-aki/utils/JsonUtil";
 import { IDatabaseTables } from "@spt-aki/models/spt/server/IDatabaseTables";
 import { Item } from "@spt-aki/models/eft/common/tables/IItem";
 import { SecuredContainers } from "@spt-aki/models/enums/ContainerTypes"
-import { LOCKPICK_AMMO_TAG, LockpickAmmoTemplate } from "./zod_types";
-import { Ammo12Gauge } from "@spt-aki/models/enums/AmmoTypes";
+import { LockpickAmmoModConfig, LockpickAmmoTemplate } from "./zod_types";
+import ModConfig = require("../config/config.json");
 
 
 class LockpickAmmoMod implements IPostDBLoadMod {
@@ -31,23 +31,15 @@ class LockpickAmmoMod implements IPostDBLoadMod {
     }
 
     private setupLockpickAmmo(): void {
-        const templates = this.readConfig()
-        for (const ammo_template of templates) {
+        const parsed_cfg = this.readConfig()
+        for (const ammo_template of parsed_cfg.lockpick_ammo_mod.lockpick_ammo) {
             this.createNewAmmo(ammo_template);
         }
     }
 
-    // TODO
-    private readConfig(): LockpickAmmoTemplate[] {
-        const defaultTemplate = LockpickAmmoTemplate.parse({});
-        const anotherTemplate = LockpickAmmoTemplate.parse({});
-        anotherTemplate.id = LOCKPICK_AMMO_TAG + " Another template id"
-        anotherTemplate.name = "Another template"
-        anotherTemplate.short_name = "Another template"
-        anotherTemplate.original_ammo_id = Ammo12Gauge.AP20_ARMOR_PIERCING_SLUG
-
-        const templates = [defaultTemplate, anotherTemplate]
-        return templates
+    private readConfig(): LockpickAmmoModConfig {
+        const parsed_cfg = LockpickAmmoModConfig.parse(ModConfig)
+        return parsed_cfg
     }
 
     private createNewAmmo(new_ammo_template: LockpickAmmoTemplate): void {
