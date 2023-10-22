@@ -289,6 +289,7 @@ async function copyFiles(srcDir, destDir, ignoreHandler) {
         // Initialize an array to hold the promises returned by recursive calls to copyFiles and copyFile operations.
         const copyOperations = [];
 
+        logger.log("info", `zod: ${path.join("node_modules", "zod")}`);
         for (const entry of entries) {
             // Define the source and destination paths for each entry.
             const srcPath = path.join(srcDir, entry.name);
@@ -296,9 +297,11 @@ async function copyFiles(srcDir, destDir, ignoreHandler) {
 
             // Get the relative path of the source file to check against the ignore handler.
             const relativePath = path.relative(process.cwd(), srcPath);
-
+            const exception_for_zod =  path.join("node_modules", "zod")
+            
             // If the ignore handler dictates that this file should be ignored, skip to the next iteration.
-            if (ignoreHandler.ignores(relativePath)) {
+            const is_in_ignore = ignoreHandler.ignores(relativePath);
+            if (is_in_ignore && !(relativePath === "node_modules") && !(relativePath.includes(exception_for_zod))) {
                 logger.log("info", `Ignored: /${path.relative(process.cwd(), srcPath)}`);
                 continue;
             }
