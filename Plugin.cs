@@ -14,8 +14,11 @@ namespace DoorBreach
     [BepInDependency("com.spt-aki.core", "3.7.1")]
     public class DoorBreachPlugin : BaseUnityPlugin
     {
-        public const String PluginVarsion = "1.2.0";
+        public const String PluginVarsion = "1.3.0";
         public const String LOCKPICK_AMMO_TAG = "#Lockpick";
+        public const String TIER1_LOCKPICK_TAG = "#TIER1";
+        public const String TIER2_LOCKPICK_TAG = "#TIER2";
+        public const String TIER3_LOCKPICK_TAG = "#TIER3";    
 
         public static ConfigEntry<float> ObjectHP;
         public static ConfigEntry<float> NonLockHitDmgMult;
@@ -26,7 +29,10 @@ namespace DoorBreach
         public static ConfigEntry<float> ThinMetalProtectionMult;
         public static ConfigEntry<float> ThickMetalProtectionMult;
         public static ConfigEntry<float> MeeleWeaponDamageMult;
-        public static ConfigEntry<float> LockpickAmmoDamageMult;
+        public static ConfigEntry<float> AdditionalDamageForTier0LockpickAmmo;
+        public static ConfigEntry<float> AdditionalDamageForTier1LockpickAmmo;
+        public static ConfigEntry<float> AdditionalDamageForTier2LockpickAmmo;
+        public static ConfigEntry<float> AdditionalDamageForTier3LockpickAmmo;
 
         public static int interactiveLayer;
         private void Awake()
@@ -42,7 +48,10 @@ namespace DoorBreach
             ThinMetalProtectionMult = Config.Bind("3. Material Protection", "ThinMetalProtectionMult", 10F);
             ThickMetalProtectionMult = Config.Bind("3. Material Protection", "ThickMetalProtectionMult", 15F);
             MeeleWeaponDamageMult = Config.Bind("4. Specific Weapon", "MeeleWeaponDamageMult", 5F);
-            LockpickAmmoDamageMult = Config.Bind("4. Specific Weapon", "LockpickAmmoDamageMult", 20F);
+            AdditionalDamageForTier0LockpickAmmo = Config.Bind("5. Lockpick ammo", "AdditionalDamageForTier0LockpickAmmo", 50F);
+            AdditionalDamageForTier1LockpickAmmo = Config.Bind("5. Lockpick ammo", "AdditionalDamageForTier1LockpickAmmo", 100F);
+            AdditionalDamageForTier2LockpickAmmo = Config.Bind("5. Lockpick ammo", "AdditionalDamageForTier2LockpickAmmo", 200F);
+            AdditionalDamageForTier3LockpickAmmo = Config.Bind("5. Lockpick ammo", "AdditionalDamageForTier3LockpickAmmo", 400F);
 
             new NewGamePatch().Enable();
             new ShootTheDoor.ApplyHit().Enable();

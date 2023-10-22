@@ -8,6 +8,9 @@ import { Ammo12Gauge } from "@spt-aki/models/enums/AmmoTypes";
 
 
 export const LOCKPICK_AMMO_TAG = "#Lockpick"
+export const TIER1_LOCKPICK_TAG = "#TIER1"
+export const TIER2_LOCKPICK_TAG = "#TIER2"
+export const TIER3_LOCKPICK_TAG = "#TIER3"
 
 export const MoneyEnum = z.nativeEnum(Money);
 export type MoneyEnum = z.infer<typeof MoneyEnum>;
@@ -50,7 +53,7 @@ export class Defaults {
     static DURABILITY_BURN_MODIFICATOR = 10.0
     static BACKGOUND_COLOR = BackgroundColourEnum.enum.violet
     static ORIGINAL_AMMO_ID = Ammo12Gauge.LEAD_SLUG
-    static ID = `${LOCKPICK_AMMO_TAG} default ammo`
+    static ID = `${LOCKPICK_AMMO_TAG} ${TIER1_LOCKPICK_TAG} default ammo`
     static SHORT_NAME = "Lockpick default ammo"
     static NAME = "Lockpick default ammo"
     static DESCRIPTION = "Lockpick default ammo description"

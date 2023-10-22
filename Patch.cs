@@ -17,7 +17,7 @@ namespace ShootTheDoor
 {
     internal class DoorBreachComponent : MonoBehaviour
     { //also all stolen from drakiaxyz
-        public static ManualLogSource Logger {get; private set;} = BepInEx.Logging.Logger.CreateLogSource("ShootTheDoor");
+        public static ManualLogSource Logger { get; private set; } = BepInEx.Logging.Logger.CreateLogSource("ShootTheDoor");
 
         private DoorBreachComponent()
         {
@@ -36,7 +36,7 @@ namespace ShootTheDoor
                 }
 
                 // Skip open doors
-                if(openableObj.DoorState == EDoorState.Open)
+                if (openableObj.DoorState == EDoorState.Open)
                 {
                     continue;
                 }
@@ -192,53 +192,82 @@ namespace ShootTheDoor
 
         private static float getNewDamage(DamageInfo damageInfo)
         {
-            var material = damageInfo.HittedBallisticCollider.TypeOfMaterial;
-            float materailMult = 1F;
+            var materialType = damageInfo.HittedBallisticCollider.TypeOfMaterial;
+
+            var materialMult = getMaterialDamageMult(materialType);
+            var lockHitMult = getLockHitDamageMult(damageInfo);
+            var meeleDmgMult = getMeeleDamageMult(damageInfo);
+            var additinalAmmoDamage = getAdditionalDamageForAmmo(damageInfo);
+            var totalMult = materialMult * lockHitMult * meeleDmgMult;
+            var newDamage = (damageInfo.Damage + additinalAmmoDamage) * totalMult;
+
+            DoorBreachComponent.Logger.LogDebug($"({damageInfo.Damage}(original dmg) + {additinalAmmoDamage}(additinalAmmoDamage))" +
+                $" * {materialMult}(materailMult for {materialType}) * {lockHitMult}(lockHitMult) * {meeleDmgMult}(meeleDmgMult)" +
+                $" == {newDamage}");
+
+            return newDamage;
+        }
+
+        private static float getMaterialDamageMult(MaterialType material)
+        {
             switch (material)
             {
                 case MaterialType.WoodThin:
-                    materailMult /= DoorBreachPlugin.ThinWoodProtectionMult.Value;
-                    break;
+                    return 1 / DoorBreachPlugin.ThinWoodProtectionMult.Value;
                 case MaterialType.Plastic:
-                    materailMult /= DoorBreachPlugin.PlasticProtectionMult.Value;
-                    break;
+                    return 1 / DoorBreachPlugin.PlasticProtectionMult.Value;
                 case MaterialType.WoodThick:
-                    materailMult /= DoorBreachPlugin.ThickWoodProtectionMult.Value;
-                    break;
+                    return 1 / DoorBreachPlugin.ThickWoodProtectionMult.Value;
                 case MaterialType.MetalThin:
-                    materailMult /= DoorBreachPlugin.ThinMetalProtectionMult.Value;
-                    break;
+                    return 1 / DoorBreachPlugin.ThinMetalProtectionMult.Value;
                 case MaterialType.MetalThick:
-                    materailMult /= DoorBreachPlugin.ThickMetalProtectionMult.Value;
-                    break;
+                    return 1 / DoorBreachPlugin.ThickMetalProtectionMult.Value;
                 default:
                     DoorBreachComponent.Logger.LogWarning($"Unknown material: {material}");
-                    break;
+                    return 1;
             }
-            float lockHitMult = isLockHit(damageInfo) ? DoorBreachPlugin.LockHitDmgMult.Value : DoorBreachPlugin.NonLockHitDmgMult.Value;
-            float meeleDmgMult = damageInfo.DamageType == EDamageType.Melee ? DoorBreachPlugin.MeeleWeaponDamageMult.Value : 1F;
-            float lockpickAmmoDmgMult = 1F;
+        }
+
+        private static float getLockHitDamageMult(DamageInfo damageInfo)
+        {
+            return isLockHit(damageInfo) ? DoorBreachPlugin.LockHitDmgMult.Value : DoorBreachPlugin.NonLockHitDmgMult.Value;
+        }
+
+        private static float getMeeleDamageMult(DamageInfo damageInfo)
+        {
+            return damageInfo.DamageType == EDamageType.Melee ? DoorBreachPlugin.MeeleWeaponDamageMult.Value : 1F;
+        }
+
+        private static float getAdditionalDamageForAmmo(DamageInfo damageInfo)
+        {
             var bulletTemplate = Singleton<ItemFactory>.Instance.ItemTemplates[damageInfo.SourceId] as AmmoTemplate;
-            if ( bulletTemplate != null )
+            if (bulletTemplate == null)
             {
-                var id = bulletTemplate._id;
-                if (id.Contains(DoorBreachPlugin.LOCKPICK_AMMO_TAG))
-                {
-                    lockpickAmmoDmgMult = DoorBreachPlugin.LockpickAmmoDamageMult.Value;
-                }
+                return 0;
             }
 
-            float totalMult = materailMult * lockHitMult * meeleDmgMult * lockpickAmmoDmgMult;
+            var id = bulletTemplate._id;
+            if (!id.Contains(DoorBreachPlugin.LOCKPICK_AMMO_TAG))
+            {
+                return 0;
+            }
 
-            var logEnty = $"materail is: {material} "
-                + $"materailMult is: {materailMult} "
-                + $"lockHitMult is: {lockHitMult} "
-                + $"meeleDmgMult is: {meeleDmgMult} "
-                + $"lockpickAmmoDmgMult is: {lockpickAmmoDmgMult} "
-                + $"totalMult is: {totalMult}";
-            DoorBreachComponent.Logger.LogDebug(logEnty);
-
-            return damageInfo.Damage * totalMult;
+            if (id.Contains(DoorBreachPlugin.TIER1_LOCKPICK_TAG))
+            {
+                return DoorBreachPlugin.AdditionalDamageForTier1LockpickAmmo.Value;
+            }
+            else if (id.Contains(DoorBreachPlugin.TIER2_LOCKPICK_TAG))
+            {
+                return DoorBreachPlugin.AdditionalDamageForTier2LockpickAmmo.Value;
+            }
+            else if (id.Contains(DoorBreachPlugin.TIER3_LOCKPICK_TAG))
+            {
+                return DoorBreachPlugin.AdditionalDamageForTier3LockpickAmmo.Value;
+            }
+            else
+            {
+                return DoorBreachPlugin.AdditionalDamageForTier0LockpickAmmo.Value;
+            }
         }
 
         private static bool isLockHit(DamageInfo damageInfo)
