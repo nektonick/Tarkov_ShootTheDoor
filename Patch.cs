@@ -215,16 +215,29 @@ namespace ShootTheDoor
                     DoorBreachComponent.Logger.LogWarning($"Unknown material: {material}");
                     break;
             }
-            DoorBreachComponent.Logger.LogDebug($"materailMult is: {materailMult}");
-
             float lockHitMult = isLockHit(damageInfo) ? DoorBreachPlugin.LockHitDmgMult.Value : DoorBreachPlugin.NonLockHitDmgMult.Value;
-            DoorBreachComponent.Logger.LogDebug($"lockHitMult is: {lockHitMult}");
-
             float meeleDmgMult = damageInfo.DamageType == EDamageType.Melee ? DoorBreachPlugin.MeeleWeaponDamageMult.Value : 1F;
-            DoorBreachComponent.Logger.LogDebug($"meeleDmgMult is: {meeleDmgMult}");
+            float lockpickAmmoDmgMult = 1F;
+            var bulletTemplate = Singleton<ItemFactory>.Instance.ItemTemplates[damageInfo.SourceId] as AmmoTemplate;
+            if ( bulletTemplate != null )
+            {
+                var id = bulletTemplate._id;
+                if (id.Contains(DoorBreachPlugin.LOCKPICK_AMMO_TAG))
+                {
+                    lockpickAmmoDmgMult = DoorBreachPlugin.LockpickAmmoDamageMult.Value;
+                }
+            }
 
-            float totalMult = materailMult * lockHitMult * meeleDmgMult;
-            DoorBreachComponent.Logger.LogDebug($"totalMult is: {totalMult}");
+            float totalMult = materailMult * lockHitMult * meeleDmgMult * lockpickAmmoDmgMult;
+
+            var logEnty = $"materail is: {material} "
+                + $"materailMult is: {materailMult} "
+                + $"lockHitMult is: {lockHitMult} "
+                + $"meeleDmgMult is: {meeleDmgMult} "
+                + $"lockpickAmmoDmgMult is: {lockpickAmmoDmgMult} "
+                + $"totalMult is: {totalMult}";
+            DoorBreachComponent.Logger.LogDebug(logEnty);
+
             return damageInfo.Damage * totalMult;
         }
 

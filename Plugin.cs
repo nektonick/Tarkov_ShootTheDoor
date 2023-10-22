@@ -15,6 +15,7 @@ namespace DoorBreach
     public class DoorBreachPlugin : BaseUnityPlugin
     {
         public const String PluginVarsion = "1.2.0";
+        public const String LOCKPICK_AMMO_TAG = "#Lockpick";
 
         public static ConfigEntry<float> ObjectHP;
         public static ConfigEntry<float> NonLockHitDmgMult;
@@ -25,6 +26,7 @@ namespace DoorBreach
         public static ConfigEntry<float> ThinMetalProtectionMult;
         public static ConfigEntry<float> ThickMetalProtectionMult;
         public static ConfigEntry<float> MeeleWeaponDamageMult;
+        public static ConfigEntry<float> LockpickAmmoDamageMult;
 
         public static int interactiveLayer;
         private void Awake()
@@ -40,6 +42,7 @@ namespace DoorBreach
             ThinMetalProtectionMult = Config.Bind("3. Material Protection", "ThinMetalProtectionMult", 10F);
             ThickMetalProtectionMult = Config.Bind("3. Material Protection", "ThickMetalProtectionMult", 15F);
             MeeleWeaponDamageMult = Config.Bind("4. Specific Weapon", "MeeleWeaponDamageMult", 5F);
+            LockpickAmmoDamageMult = Config.Bind("4. Specific Weapon", "LockpickAmmoDamageMult", 20F);
 
             new NewGamePatch().Enable();
             new ShootTheDoor.ApplyHit().Enable();
