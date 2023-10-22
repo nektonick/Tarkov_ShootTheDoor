@@ -9,6 +9,7 @@ import { Item } from "@spt-aki/models/eft/common/tables/IItem";
 import { SecuredContainers } from "@spt-aki/models/enums/ContainerTypes"
 import { LockpickAmmoModConfig, LockpickAmmoTemplate } from "./zod_types";
 import ModConfig = require("../config/config.json");
+import { ITemplateItem, Slot } from "@spt-aki/models/eft/common/tables/ITemplateItem";
 
 
 class LockpickAmmoMod implements IPostDBLoadMod {
@@ -53,6 +54,7 @@ class LockpickAmmoMod implements IPostDBLoadMod {
         this.addItemToHandbook(new_ammo_template)
         this.addItemToTraders(new_ammo_template)
         this.allowIntoSecureContainers(new_ammo_template.id)
+        this.makeAmmoUsableWithWeapon(new_ammo_template);
     }
 
     private isItemAlreadyExists(id: string): boolean {
@@ -161,6 +163,158 @@ class LockpickAmmoMod implements IPostDBLoadMod {
 
             const container_props = items![secure_container]._props;
             container_props.Grids![0]._props.filters[0].Filter.push(item_id)
+        }
+    }
+
+    private makeAmmoUsableWithWeapon(new_ammo_template: LockpickAmmoTemplate) {
+        const items = this.tables!.templates!.items!;
+        for (const item_id in items) {
+            this.processSingleItem(items[item_id], new_ammo_template)
+        }
+    }
+
+    private processSingleItem(item_template: ITemplateItem, new_ammo_template: LockpickAmmoTemplate) {
+        const slots = item_template._props.Slots;
+        if (slots !== undefined) {
+            this.processItemSlots(slots, new_ammo_template);
+        }
+
+        const chambers = item_template._props.Chambers;
+        if (chambers !== undefined) {
+            this.processItemChambers(chambers, new_ammo_template);
+        }
+
+        const cartridges = item_template._props.Cartridges!;
+        if (cartridges !== undefined) {
+            this.processItemCartridges(cartridges, new_ammo_template);
+        }
+    }
+
+    private processItemSlots(slots: Slot[], new_ammo_template: LockpickAmmoTemplate) {
+        for (const slot of slots) {
+            const slot_allowed_items = slot._props.filters[0].Filter
+            if (slot_allowed_items.includes(new_ammo_template.original_ammo_id)) {
+                // Case 1: allowed item is original_ammo_id
+                slot_allowed_items.push(new_ammo_template.id)
+            } else {
+                // Case 2: allowed item is kind of ammo magazine
+                this.processSubSlots(slot_allowed_items, new_ammo_template)
+            }                
+        }
+    }
+
+    private processSubSlots(slot_allowed_items_ids: string[], new_ammo_template: LockpickAmmoTemplate) {
+        const items = this.tables!.templates!.items!;
+
+        for (const allowed_item_id of slot_allowed_items_ids) {            
+            const allowed_item = items[allowed_item_id];
+            this.processSingleItem(allowed_item, new_ammo_template)
+        }
+    }
+
+    private processItemChambers(chambers: Slot[], new_ammo_template: LockpickAmmoTemplate) {
+        for (const chamber of chambers) {
+            const chamber_allowed_items = chamber._props.filters[0].Filter;
+            if (chamber_allowed_items.includes(new_ammo_template.original_ammo_id)) {
+                chamber_allowed_items.push(new_ammo_template.id);
+            }
+        }
+    }
+
+    private processItemCartridges(cartridges: Slot[], new_ammo_template: LockpickAmmoTemplate) {
+        for (const cartridge of cartridges) {
+            const cartridge_allowed_items = cartridge._props.filters[0].Filter;
+            if (cartridge_allowed_items.includes(new_ammo_template.original_ammo_id)) {
+                cartridge_allowed_items.push(new_ammo_template.id);
+            }
+        }
+    }
+
+    private addAmmoToAllMags(new_ammo_template: LockpickAmmoTemplate, ammo: string) {
+        const tables = this.tables;
+        const items = tables!.templates!.items!;
+
+        const original_ammo_id = items[new_ammo_template.original_ammo_id];
+        const original_caliber = original_ammo_id._props.ammoCaliber
+
+        for (const item_id in items) {
+            const item_template = items[item_id]!;
+            if (item_template._props.Chambers === undefined) {
+                continue;
+            }
+            if (item_template._props.ammoCaliber !== original_caliber) {
+                continue;
+            }
+
+            const slotes = item_template._props.Slots!;
+            for (const slot of slotes) {
+                if (slot._name !== "mod_magazine") {
+                    continue;
+                }
+
+                const mag_filters = slot._props.filters[0].Filter
+                for (const mag_filter of mag_filters) {
+                    if (!(mag_filter in items)) {
+                        return;
+                    }
+            
+                    const magazineID = items[mag_filter];
+                    const cartridges = magazineID._props.Cartridges
+                    const cartridge_props = cartridges?.[0]?._props
+                    if (cartridge_props === undefined) {
+                        return;
+                    }
+            
+                    const cartridge_filter = cartridge_props.filters[0].Filter;
+                    cartridge_filter.push(ammo);
+                }
+            }
+        }
+    }
+
+    private addAmmoToAllChambers(new_ammo_template: LockpickAmmoTemplate, ammo: string) {
+        const tables = this.tables;
+        const items = tables!.templates!.items!;
+
+        const base_item_caliber = items[new_ammo_template.original_ammo_id]._props.ammoCaliber
+
+        for (const item_id in items) {
+            const item_template = items[item_id];
+            if (item_template._props.Chambers === undefined) {
+                continue;
+            }
+            
+            if (item_template._props.ammoCaliber !== base_item_caliber) {
+                continue;
+            }
+
+            const chambers = item_template._props.Chambers;
+            const chamber_props = chambers?.[0]?._props;
+            if (chamber_props === undefined) {
+                return;
+            }
+
+            for (const chamber of chambers!) {
+                const z_Filter = chamber._props.filters[0].Filter;
+                z_Filter.push(ammo);
+            }
+        }
+    }
+
+
+    private makeAmmoUsableWithRevolvingWeapons(itemId: string, ammoToAdd: string) {
+        const tables = this.tables;
+        const items = tables!.templates!.items!;
+
+        const weaponID = items[itemId];
+        for (const slot of weaponID._props.Slots!) {
+            const z_Filter = slot._props.filters[0].Filter;
+            z_Filter.push(ammoToAdd);
+        }
+
+        for (const cartridge of weaponID._props.Cartridges!) {
+            const z_Filter = cartridge._props.filters[0].Filter;
+            z_Filter.push(ammoToAdd);
         }
     }
 }
