@@ -12,32 +12,33 @@ import { Ammo12Gauge } from "@spt-aki/models/enums/AmmoTypes";
 
 
 class LockpickAmmoMod implements IPostDBLoadMod {
-    private mod: string
+    private mod: string = "LockpickAmmo"
     private logger: null | ILogger = null
-    private container: null | DependencyContainer = null
     private jsonUtil: null | JsonUtil = null
     private tables: null | IDatabaseTables = null
-
-    constructor() {
-        this.mod = "LockpickAmmo"; // Set name of mod so we can log it to console later
-    }
 
     /**
      * Majority of trader-related work occurs after the aki database has been loaded but prior to SPT code being run
      * @param container Dependency container
      */
     public postDBLoad(container: DependencyContainer): void {
-        this.container = container;
         this.jsonUtil = container.resolve<JsonUtil>("JsonUtil");
-        const databaseServer = this.container.resolve<DatabaseServer>("DatabaseServer");
+        const databaseServer = container.resolve<DatabaseServer>("DatabaseServer");
         this.tables = databaseServer.getTables();
         this.logger = container.resolve<ILogger>("WinstonLogger");
 
         this.setupLockpickAmmo()
-        this.logger.debug(`[${this.mod}] postDb Loaded`);
     }
 
     private setupLockpickAmmo(): void {
+        const templates = this.readConfig()
+        for (const ammo_template of templates) {
+            this.createNewAmmo(ammo_template);
+        }
+    }
+
+    // TODO
+    private readConfig(): LockpickAmmoTemplate[] {
         const defaultTemplate = LockpickAmmoTemplate.parse({});
         const anotherTemplate = LockpickAmmoTemplate.parse({});
         anotherTemplate.id = LOCKPICK_AMMO_TAG + " Another template id"
@@ -46,50 +47,43 @@ class LockpickAmmoMod implements IPostDBLoadMod {
         anotherTemplate.original_ammo_id = Ammo12Gauge.AP20_ARMOR_PIERCING_SLUG
 
         const templates = [defaultTemplate, anotherTemplate]
-        for (const ammo_template of templates) {
-            
-            this.logger!.info(`[${this.mod}] id: ${ammo_template.id}`);
-            this.createNewAmmo(ammo_template);
-        }
+        return templates
     }
 
     private createNewAmmo(new_ammo_template: LockpickAmmoTemplate): void {
-        if (this.isIdAlreadyExists(new_ammo_template.id)) {
+        if (this.isItemAlreadyExists(new_ammo_template.id)) {
             this.logger!.warning(`[${this.mod}] id ${new_ammo_template.id} already exists`);
+            return;
         }
 
-        this.deleteItem(new_ammo_template.id)
         this.createItem(new_ammo_template)
-
-        this.deleteItemLocale(new_ammo_template)
         this.createItemLocale(new_ammo_template)
-
-        this.removeItemFromHandbook(new_ammo_template.id)
         this.addItemToHandbook(new_ammo_template)
-
-        this.removeItemFromTraders(new_ammo_template)
         this.addItemToTraders(new_ammo_template)
-
-        this.deleteFromSecureContainers(new_ammo_template.id)
         this.allowIntoSecureContainers(new_ammo_template.id)
     }
 
-    private isIdAlreadyExists(id: string): boolean {
-        const items = this.tables?.templates?.items[id]
-        return items !== undefined && id in items;
-    }
-
-    private deleteItem(id: string) {
-        delete this.tables!.templates!.items[id];
+    private isItemAlreadyExists(id: string): boolean {
+        const items = this.tables?.templates?.items
+        if (items == undefined) {
+            this.logger!.warning(`[${this.mod}] can't resolve items`);
+            return false;
+        }
+        return id in items;
     }
 
     private createItem(new_ammo_template: LockpickAmmoTemplate) {
-        const item = this.jsonUtil!.clone(this.tables!.templates!.items[new_ammo_template.original_ammo_id]);
-        item._id = new_ammo_template.id;
-
+        const items = this.tables!.templates!.items;
+        if (!(new_ammo_template.original_ammo_id in items)) {
+            this.logger!.warning(`[${this.mod}] can't find base item ${new_ammo_template.original_ammo_id} in templates`);
+            return;
+        }
+        const base_item = items[new_ammo_template.original_ammo_id]
+        const new_item = this.jsonUtil!.clone(base_item);
+        const props = new_item._props;
         const ammo_options = new_ammo_template.ammo_options;
-        const props = item._props;
 
+        new_item._id = new_ammo_template.id;
         props.Damage = ammo_options.damage;
         props.ArmorDamage = ammo_options.armor_damage;
         props.PenetrationPower = ammo_options.penetration_power;
@@ -101,17 +95,7 @@ class LockpickAmmoMod implements IPostDBLoadMod {
         props.DurabilityBurnModificator = ammo_options.durability_burn_modificator;
         props.BackgroundColor = ammo_options.backgound_color;
 
-        item._props = props;
-        this.tables!.templates!.items[new_ammo_template.id] = item;
-    }
-
-    private deleteItemLocale(new_ammo_template: LockpickAmmoTemplate) {
-        const locales = Object.values(this.tables!.locales!.global) as Record<string, string>[];
-        for (const locale of locales) {
-            delete locale[`${new_ammo_template.id} Name`]
-            delete locale[`${new_ammo_template.id} ShortName`]
-            delete locale[`${new_ammo_template.id} Description`]
-        }
+        this.tables!.templates!.items[new_ammo_template.id] = new_item;
     }
 
     private createItemLocale(new_ammo_template: LockpickAmmoTemplate) {
@@ -124,58 +108,27 @@ class LockpickAmmoMod implements IPostDBLoadMod {
     }
 
     private addItemToHandbook(new_ammo_template: LockpickAmmoTemplate) {
-        this.logger!.info(`[${this.mod}] hb id: ${new_ammo_template.id}`);
-
         const handbook = this.tables!.templates!.handbook;
-
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const fs = require("fs")
-        let data = ""
-        for (const item of handbook.Items) {
-            data += item.Id + "\n"
-        }
-        fs.writeFileSync(String.raw`C:\Games\SPT_3_7_1\user\mods\nektonick-lockpick_ammo-1.0.0\output.txt`, data);
-
         const base_handbook_item = handbook.Items.find((item) => item.Id == new_ammo_template.original_ammo_id)
         if (base_handbook_item === undefined) {
+            this.logger!.warning(`[${this.mod}] can't find base item ${new_ammo_template.original_ammo_id} in handbook`);
             return;
         }
+
         handbook.Items.push({
             Id: new_ammo_template.id,
             ParentId: base_handbook_item.ParentId,
             Price: new_ammo_template.price_in_handbook
         });
-        
-        data = ""
-        for (const item of handbook.Items) {
-            data += item.Id + "\n"
-        }
-        fs.writeFileSync(String.raw`C:\Games\SPT_3_7_1\user\mods\nektonick-lockpick_ammo-1.0.0\output.txt`, data);
-    }
-
-    private removeItemFromHandbook(id: string) {
-        const handbook = this.tables!.templates!.handbook;
-        const item = handbook.Items.find((item) => item.Id === id)
-        if (item === undefined) {
-            return;
-        }
-        this.logger!.warning(`[${this.mod}] id ${id} already exists in handbook`);
-
-        handbook.Items = handbook.Items.filter((item) => item.Id !== id)
-    }
-
-    private removeItemFromTraders(new_ammo_template: LockpickAmmoTemplate) {
-        for (const trader_options of new_ammo_template.traders_options) {
-            const trader = this.tables!.traders![trader_options.trader];
-            const trader_assort = trader.assort;
-            trader_assort.items = trader_assort.items.filter(item => item._id !== new_ammo_template.id)
-            delete trader_assort.barter_scheme[new_ammo_template.id]
-            delete trader_assort.loyal_level_items[new_ammo_template.id]
-        }
     }
 
     private addItemToTraders(new_ammo_template: LockpickAmmoTemplate) {
         for (const trader_options of new_ammo_template.traders_options) {
+            if (!(trader_options.trader in this.tables!.traders!)) {
+                this.logger!.warning(`[${this.mod}] can't find trader ${trader_options.trader}`);
+                continue;
+            }
+
             const trader = this.tables!.traders![trader_options.trader];
             const trader_assort = trader.assort;
 
@@ -206,18 +159,14 @@ class LockpickAmmoMod implements IPostDBLoadMod {
         }
     }
 
-    private deleteFromSecureContainers(item_id: string) {
-        const items = this.tables?.templates?.items;
-        for (const secure_container of [SecuredContainers.ALPHA, SecuredContainers.BETA, SecuredContainers.EPSILON, SecuredContainers.GAMMA, SecuredContainers.KAPPA]) {
-            const container_props = items![secure_container]._props;
-            const grid_filter = container_props.Grids![0]._props.filters[0];
-            grid_filter.Filter = grid_filter.Filter.filter(item => item !== item_id)
-        }
-    }
-
     private allowIntoSecureContainers(item_id: string): void {
         const items = this.tables?.templates?.items;
         for (const secure_container of [SecuredContainers.ALPHA, SecuredContainers.BETA, SecuredContainers.EPSILON, SecuredContainers.GAMMA, SecuredContainers.KAPPA]) {
+            if (!(secure_container in items!)) {
+                this.logger!.warning(`[${this.mod}] can't find container ${secure_container}`);
+                continue;
+            }
+
             const container_props = items![secure_container]._props;
             container_props.Grids![0]._props.filters[0].Filter.push(item_id)
         }
