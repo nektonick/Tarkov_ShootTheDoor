@@ -3,21 +3,39 @@
 To build this project change value of `SptFolder` in `ShootTheDoor.csproj` from `C:\Games\SPT_3_7_1` to your path to SPT folder
 
 ## Description
-I steal the idea from dvize's BackdoorBandit mod and make all weapons suitable for opening door(Something like dvize's `PlebMode`).
-I made it because, I think some weapon should be more effective than another one and metal doors should take more shoots than wooden doors.
-So, I rewrite the core part of client side mod and remove the server side mod(since you don't need specific bullets anymore).
+Like BackdoorBandit but with more customization!
 
-But the main idea stays the same. This mod allow you to open locked doors(and containers like safes. and car doors) by shooting into them. Like in real life.
+I steal the idea from dvize's BackdoorBandit mod and make all weapons suitable for opening door, cars and safes(Something like dvize's `PlebMode`).
+However some weapon is more effective than another one. 
+Also metal doors should take more shoots than wooden doors.
+Like in real life.
 
 ## Install 
-Place DLL file into %SPT%/BepInEx/plugins
+Unzip archive to your SPT folder.
+(client-side DLL file goes into %SPT%/BepInEx/plugins, server-side nektonick-lockpick_ammo folder goes into %SPT%/user/mods)
 
 ## Usage
 - Take your gun.
-- Shoot to the door
-    - Aim for the door lock for more damage.
+- Shoot to the door (or car door, or safe, or even door with keycard access)
+    - Aim for the lock for more damage.
+    - Try shotguns. They do a lot of damage!
 - When door HP drops to zero door will open.
-- Also try to use meele weapon for this!
+- Also
+    - Try to use meele weapon and granedes to open doors
+    - Try to change some values in BepInEx config menu (F12) accoring to your playstyle
+    - Try Lockpick ammo(sold by Mechanic by default) to deal even more damage against objects
+        - Try to create your custom lockpick ammo for AKM or Mosin
+
+## New features
+- Lockpick ammo
+    - You can add new ammo with high damage agains objects sold by traders. See examples in config.json
+        - Build-in config.json checking on start of the server! No more runtime erros because of negative damage value!
+    - Also added new options in BepInEx config menu (F12)
+
+## TODO
+- Kick locked doors make damage to you and door
+- Lock door back after unlocking by key
+- Penetration make sense
 
 ## Config
 - You can change some values in BepInEx config menu (F12):
@@ -34,6 +52,7 @@ Place DLL file into %SPT%/BepInEx/plugins
         - ThickMetalProtectionMult
     - Specific Weapon - make certain types of weapon more effective against doors
         - MeeleWeaponDamageMult - because crowbar is effective in real life
+    - Lockpick ammo - configure base damage for different tiers of new lockpick ammo
 
 ## Credits
 Original mod: 
